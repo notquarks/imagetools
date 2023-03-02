@@ -1,22 +1,23 @@
 // To parse this JSON data, do
 //
-//     final rank = rankFromJson(jsonString);
+//     final prediction = predictionFromJson(jsonString);
 
 import 'dart:convert';
 
-Rank rankFromJson(String str) => Rank.fromJson(json.decode(str));
+Prediction predictionFromJson(String str) =>
+    Prediction.fromJson(json.decode(str));
 
-String rankToJson(Rank data) => json.encode(data.toJson());
+String predictionToJson(Prediction data) => json.encode(data.toJson());
 
-class Rank {
-  Rank({
+class Prediction {
+  Prediction({
     required this.prediction,
   });
 
-  Prediction prediction;
+  PredictionClass prediction;
 
-  factory Rank.fromJson(Map<String, dynamic> json) => Rank(
-        prediction: Prediction.fromJson(json["prediction"]),
+  factory Prediction.fromJson(Map<String, dynamic> json) => Prediction(
+        prediction: PredictionClass.fromJson(json["prediction"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -24,8 +25,8 @@ class Rank {
       };
 }
 
-class Prediction {
-  Prediction({
+class PredictionClass {
+  PredictionClass({
     required this.uuid,
     required this.versionId,
     required this.createdAt,
@@ -55,7 +56,8 @@ class Prediction {
   PredictionVersion version;
   dynamic user;
 
-  factory Prediction.fromJson(Map<String, dynamic> json) => Prediction(
+  factory PredictionClass.fromJson(Map<String, dynamic> json) =>
+      PredictionClass(
         uuid: json["uuid"],
         versionId: json["version_id"],
         createdAt: DateTime.parse(json["created_at"]),
