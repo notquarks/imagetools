@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -11,14 +12,19 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ImageProcessor {
-  final ImagePicker _picker = ImagePicker();
+  // final ImagePicker _picker = ImagePicker();
+  FileType _pickingType = FileType.image;
   final WidgetRef _ref;
   ImageProcessor(this._ref);
 
   Future<File?> pickImage() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    // final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    final pickedFile = await FilePicker.platform.pickFiles(
+      type: _pickingType,
+      allowMultiple: false,
+    );
     if (pickedFile != null) {
-      return File(pickedFile.path);
+      return File(pickedFile.files.single.path!);
     }
     return null;
   }

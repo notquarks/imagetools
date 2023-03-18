@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:imagetools/providers/data_provider.dart';
 import 'package:imagetools/screens/settings.dart';
 import 'package:imagetools/utils.dart';
+import 'package:path_provider/path_provider.dart';
 
 class MyHomePage extends ConsumerWidget {
   @override
@@ -25,18 +28,22 @@ class MyHomePage extends ConsumerWidget {
         ],
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (imageFile != null) Image.file(imageFile),
-            if (upscaledImage != null) Image.file(upscaledImage),
-            if (errorMessage != null) Text(errorMessage),
-            if (isProcessing) CircularProgressIndicator(),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (imageFile != null) Image.file(imageFile),
+              if (upscaledImage != null) Image.file(upscaledImage),
+              if (errorMessage != null) Text(errorMessage),
+              if (isProcessing) CircularProgressIndicator(),
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
+          // final Directory tempDir = await getTemporaryDirectory();
+          // tempDir.delete(recursive: true);
           final pickedFile = await _imageProcessor.pickImage();
           if (pickedFile != null) {
             ref.read(imageFileProvider.notifier).state = pickedFile;

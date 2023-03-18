@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:imagetools/components/ObscuredText.dart';
+import 'package:imagetools/components/PasswordField.dart';
 import 'package:imagetools/providers/data_provider.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {
@@ -9,10 +11,13 @@ class SettingsPage extends ConsumerStatefulWidget {
   ConsumerState<SettingsPage> createState() => _SettingsPageState();
 }
 
+final newTokenProvider = StateProvider<String>((ref) => '');
+
 class _SettingsPageState extends ConsumerState<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     final apiToken = ref.watch(apiTokenProvider);
+    final apiTextController = TextEditingController(text: apiToken);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
@@ -21,10 +26,12 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         children: [
           ListTile(
             title: Text('API Token'),
-            subtitle: Text(
-                apiToken == null || apiToken.isEmpty ? 'Not set' : apiToken),
+            subtitle: ObscuredText(
+                text: apiToken == null || apiToken.isEmpty
+                    ? 'Not set'
+                    : apiToken),
             onTap: () {
-              _showApiTokenDialog(context);
+              _showApiTokenDialog(context, apiTextController);
             },
           )
         ],
@@ -32,20 +39,17 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     );
   }
 
-  void _showApiTokenDialog(BuildContext context) {
+  void _showApiTokenDialog(
+      BuildContext context, TextEditingController apiTokenController) {
+    bool _isObscured = true;
     showDialog(
       context: context,
       builder: (BuildContext context) {
         String newToken = '';
         return AlertDialog(
           title: Text('Enter API Token'),
-          content: TextField(
-            onChanged: (value) {
-              newToken = value;
-            },
-            decoration: InputDecoration(
-              hintText: 'Enter your API token here',
-            ),
+          content: PasswordField(
+            textController: apiTokenController,
           ),
           actions: [
             TextButton(
@@ -59,7 +63,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               onPressed: () async {
                 await ref
                     .read(apiTokenProvider.notifier)
-                    .saveApiToken(newToken);
+                    .saveApiToken(ref.watch(newTokenProvider));
                 Navigator.of(context).pop();
               },
             ),
